@@ -59,7 +59,7 @@ class Weather():
                 elif temp == min_temperature:
                     Print.change_style(Style.BOLD)
                     Print.change_color(Weather.COLOR_BLUE, past)
-            sys.stdout.write(String.rjust_unicode(unicode(temp), unit_width))
+            sys.stdout.write(String.rjust_unicode(u'%.1f' % temp, unit_width))
             Print.change_style(Style.RESET)
             sys.stdout.write(' ')
         sys.stdout.write('\n')
@@ -70,7 +70,7 @@ class Weather():
         for (prb_rain, past) in zip(self.probability_of_rains, self.is_past):
             if past:
                 Print.change_style(Style.WEAKEN)
-            sys.stdout.write(String.rjust_unicode(unicode(prb_rain), unit_width))
+            sys.stdout.write(String.rjust_unicode(u'%d' % prb_rain, unit_width))
             Print.change_style(Style.RESET)
             sys.stdout.write(' ')
         sys.stdout.write('\n')
@@ -81,7 +81,7 @@ class Weather():
         for (amo_rain, past) in zip(self.amount_of_rains, self.is_past):
             if past:
                 Print.change_style(Style.WEAKEN)
-            sys.stdout.write(String.rjust_unicode(unicode(amo_rain), unit_width))
+            sys.stdout.write(String.rjust_unicode(u'%.1f' % amo_rain, unit_width))
             Print.change_style(Style.RESET)
             sys.stdout.write(' ')
         sys.stdout.write('\n')
@@ -92,7 +92,7 @@ class Weather():
         for (humid, past) in zip(self.humidities, self.is_past):
             if past:
                 Print.change_style(Style.WEAKEN)
-            sys.stdout.write(String.rjust_unicode(unicode(humid), unit_width))
+            sys.stdout.write(String.rjust_unicode(u'%d' % humid, unit_width))
             Print.change_style(Style.RESET)
             sys.stdout.write(' ')
         sys.stdout.write('\n')
