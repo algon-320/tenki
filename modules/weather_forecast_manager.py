@@ -10,7 +10,7 @@ from weather import Weather
 from print_util import String
 
 
-class WeatherForecastManger:
+class WeatherForecastManager:
 
     SHOW_OPTS = (
         SHOW_WEATHER,
@@ -77,7 +77,7 @@ class WeatherForecastManger:
 
     def print_weather(self, show_opts=None):
         if show_opts == None:
-            show_opts = WeatherForecastManger.SHOW_ALL
+            show_opts = WeatherForecastManager.SHOW_ALL
 
         print '----------------------------------------------------------------'
         print (self.point_name + u'の天気  (' + self.updated_time + ')')
@@ -91,16 +91,16 @@ class WeatherForecastManger:
         sys.stdout.write(' ' * max_width + '03時 06時 09時 12時 15時 18時 21時 24時\n')
         print '================================================================'
         for w in self.weathers:
-            col = bool(show_opts & WeatherForecastManger.SHOW_WITHOUT_COLORS)
-            if show_opts & WeatherForecastManger.SHOW_WEATHER:
+            col = bool(show_opts & WeatherForecastManager.SHOW_WITHOUT_COLORS)
+            if show_opts & WeatherForecastManager.SHOW_WEATHER:
                 w.print_weather(max_width, no_color=col)
-            if show_opts & WeatherForecastManger.SHOW_TEMPERATURE:
+            if show_opts & WeatherForecastManager.SHOW_TEMPERATURE:
                 w.print_temperature(max_width, no_color=col)
-            if show_opts & WeatherForecastManger.SHOW_PROBABILITY_OF_RAIN:
+            if show_opts & WeatherForecastManager.SHOW_PROBABILITY_OF_RAIN:
                 w.print_probability_of_rain(max_width, no_color=col)
-            if show_opts & WeatherForecastManger.SHOW_AMOUNT_OF_RAIN:
+            if show_opts & WeatherForecastManager.SHOW_AMOUNT_OF_RAIN:
                 w.print_amount_of_rain(max_width, no_color=col)
-            if show_opts & WeatherForecastManger.SHOW_HUMIDITY:
+            if show_opts & WeatherForecastManager.SHOW_HUMIDITY:
                 w.print_humidity(max_width, no_color=col)
             print '================================================================'
 
