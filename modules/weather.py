@@ -37,7 +37,7 @@ class Weather():
             if past:
                 style |= Style.WEAKEN
             if no_color == False:
-                Print.change_color(Weather.COLOR.get(weather, Weather.COLOR_UNK), past)
+                Print.change_color(Weather.COLOR.get(weather, Weather.COLOR_UNK), weaken=past)
             Print.change_style(style)
             sys.stdout.write(String.rjust_unicode(weather, unit_width))
             Print.change_style(Style.RESET)
@@ -55,10 +55,10 @@ class Weather():
             if no_color == False:
                 if temp == max_temperature:
                     Print.change_style(Style.BOLD)
-                    Print.change_color(Weather.COLOR_RED, past)
+                    Print.change_color(Weather.COLOR_RED, weaken=past)
                 elif temp == min_temperature:
                     Print.change_style(Style.BOLD)
-                    Print.change_color(Weather.COLOR_BLUE, past)
+                    Print.change_color(Weather.COLOR_BLUE, weaken=past)
             sys.stdout.write(String.rjust_unicode(u'%.1f' % temp, unit_width))
             Print.change_style(Style.RESET)
             sys.stdout.write(' ')
