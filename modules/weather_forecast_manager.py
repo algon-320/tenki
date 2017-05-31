@@ -34,8 +34,17 @@ class WeatherForecastManager:
 
         if os.path.exists(WeatherForecastManager.PICKLE_DUMP_FILE):
             self.unpickle()
-            last_update = int(re.match(r'.*(\d{2}):\d{2}.*', self.updated_time).group(1))
-            if (last_update + 2) <= datetime.datetime.today().hour:
+            def parse_date(timestr):
+                mat = re.match(ur'(\d+)年(\d+)月(\d+)日(\d+):(\d+)発表', timestr)
+                year = int(mat.group(1))
+                month = int(mat.group(2))
+                day = int(mat.group(3))
+                hour = int(mat.group(4))
+                minute = int(mat.group(5))
+                return datetime.datetime(year, month, day, hour, minute)
+
+            last_update = parse_date(self.updated_time)
+            if last_update + datetime.timedelta(hours=2) <= datetime.datetime.now():
                 self.weathers = []
                 self.update_weather(days)
         else:
@@ -44,6 +53,7 @@ class WeatherForecastManager:
 
 
     def update_weather(self, days=2):
+        # print '[info] checking for update ...'
         try:
             html = urllib2.urlopen(self.url)
         except:
