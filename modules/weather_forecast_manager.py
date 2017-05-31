@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import os
+import datetime
 import pickle
 import lxml.html
 import urllib2
@@ -11,6 +13,7 @@ from print_util import String
 
 
 class WeatherForecastManager:
+    PICKLE_DUMP_FILE = 'tenki.dump'
 
     SHOW_OPTS = (
         SHOW_WEATHER,
@@ -28,7 +31,17 @@ class WeatherForecastManager:
         self.weathers = []
         self.updated_time = None
         self.point_name = ''
-        self.update_weather(days)
+
+        if os.path.exists(WeatherForecastManager.PICKLE_DUMP_FILE):
+            self.unpickle()
+            last_update = int(re.match(r'.*(\d{2}):\d{2}.*', self.updated_time).group(1))
+            if (last_update + 2) <= datetime.datetime.today().hour:
+                self.update_weather(days)
+
+        else:
+            self.update_weather(days)
+            self.pickle()
+
 
 
     def update_weather(self, days=2):
@@ -39,8 +52,7 @@ class WeatherForecastManager:
             sys.exit(1)
 
         dom = lxml.html.parse(html)
-        announce_datetime = dom.xpath(r'//*[@id="point_announce_datetime"]')[0].text
-        self.updated_time = announce_datetime
+        self.updated_time = dom.xpath(r'//*[@id="point_announce_datetime"]')[0].text
         point_info = dom.xpath(r'//*[@id="pinpoint_weather_name"]')[0].text
         self.point_name = re.match(ur'(.+)のピンポイント天気', point_info).group(1)
 
@@ -65,14 +77,16 @@ class WeatherForecastManager:
 
     # 現状使っていない TODO
     def pickle(self):
-        with open('tenki' + '.dump', 'w') as f:
-            pickle.dump((self.url, self.weather, self.updated_time), f)
+        with open(WeatherForecastManager.PICKLE_DUMP_FILE, 'w') as f:
+            pickle.dump((self.url, self.weathers, self.updated_time, self.point_name), f)
+
     def unpickle(self):
-        with open('tenki.dump', 'r') as f:
+        with open(WeatherForecastManager.PICKLE_DUMP_FILE, 'r') as f:
             tmp = pickle.load(f)
             self.url = tmp[0]
-            self.weather = tmp[1]
+            self.weathers = tmp[1]
             self.updated_time = tmp[2]
+            self.point_name = tmp[3]
 
 
     def print_weather(self, show_opts=None, conky=False):
