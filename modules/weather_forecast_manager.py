@@ -75,12 +75,12 @@ class WeatherForecastManager:
             self.updated_time = tmp[2]
 
 
-    def print_weather(self, show_opts=None):
+    def print_weather(self, show_opts=None, conky=False):
         if show_opts == None:
             show_opts = WeatherForecastManager.SHOW_ALL
 
         print '----------------------------------------------------------------'
-        print (self.point_name + u'の天気  (' + self.updated_time + ')')
+        print (self.point_name + u'の天気  (' + self.updated_time + ')').encode('utf-8')
         max_width = 0
         for w in self.weathers:
             if max_width < String.get_string_width(w.date):
@@ -93,15 +93,15 @@ class WeatherForecastManager:
         for w in self.weathers:
             col = bool(show_opts & WeatherForecastManager.SHOW_WITHOUT_COLORS)
             if show_opts & WeatherForecastManager.SHOW_WEATHER:
-                w.print_weather(max_width, no_color=col)
+                w.print_weather(max_width, no_color=col, conky=conky)
             if show_opts & WeatherForecastManager.SHOW_TEMPERATURE:
-                w.print_temperature(max_width, no_color=col)
+                w.print_temperature(max_width, no_color=col, conky=conky)
             if show_opts & WeatherForecastManager.SHOW_PROBABILITY_OF_RAIN:
-                w.print_probability_of_rain(max_width, no_color=col)
+                w.print_probability_of_rain(max_width, no_color=col, conky=conky)
             if show_opts & WeatherForecastManager.SHOW_AMOUNT_OF_RAIN:
-                w.print_amount_of_rain(max_width, no_color=col)
+                w.print_amount_of_rain(max_width, no_color=col, conky=conky)
             if show_opts & WeatherForecastManager.SHOW_HUMIDITY:
-                w.print_humidity(max_width, no_color=col)
+                w.print_humidity(max_width, no_color=col, conky=conky)
             print '================================================================'
 
 

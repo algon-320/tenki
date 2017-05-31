@@ -18,6 +18,10 @@ class Color:
             self.color = col
 
 
+    def convert_to_hex(self):
+        return '#%02X%02X%02X' % (self.color[0], self.color[1], self.color[2])
+
+
     @staticmethod
     def convert_from_hex_to_rgb(hexcolstr):
         """
@@ -80,7 +84,7 @@ class String:
         string : 対象の文字列
         width : 半角基準の幅
         """
-        return (' ' * (width - String.get_string_width(string)) + string)
+        return (' ' * (width - String.get_string_width(string)) + string).encode('utf-8')
 
 
     @staticmethod
@@ -90,7 +94,7 @@ class String:
         string : 対象の文字列
         width : 半角基準の幅
         """
-        return (string + ' ' * (width - String.get_string_width(string)))
+        return (string + ' ' * (width - String.get_string_width(string))).encode('utf-8')
 
 
     @staticmethod
@@ -105,33 +109,47 @@ class String:
         """
         tmp = width - String.get_string_width(string)
         if ljust:
-            return (' ' * (tmp // 2) + string + ' ' * (tmp - tmp // 2))
+            return (' ' * (tmp // 2) + string + ' ' * (tmp - tmp // 2)).encode('utf-8')
         else:
-            return (' ' * (tmp - tmp // 2) + string + ' ' * (tmp // 2))
+            return (' ' * (tmp - tmp // 2) + string + ' ' * (tmp // 2)).encode('utf-8')
 
 
 
 class Print:
 
     @staticmethod
-    def change_style(style_opts, out=sys.stdout):
+    def change_style(style_opts, conky=False, out=sys.stdout):
         """
         style_opts : 変更したいスタイルのフラグ (|で複数指定可能) Style.BOLD など
         out : 書き込むファイル (標準エラーならsys.stderr)
         """
         if style_opts & Style.RESET:
-            out.write('\033[0m')
+            if conky:
+                out.write('${color}${font}')
+            else:
+                out.write('\033[0m')
             return
 
-        cmd = '\033['
-        for (i, v) in enumerate(Style.STYLE):
-            if style_opts & v:
-                cmd += "%d;" % (i)
-        out.write(cmd[:-1] + 'm')
+        if conky:
+            cmd = ''
+            if style_opts & Style.BOLD:
+                # cmd += '${font :bold}'  # バグる
+                pass
+            if style_opts & Style.ITALIC:
+                # cmd += '${font :italic}'  # バグる
+                pass
+            out.write(cmd)
+
+        else:
+            cmd = '\033['
+            for (i, v) in enumerate(Style.STYLE):
+                if style_opts & v:
+                    cmd += "%d;" % (i)
+            out.write(cmd[:-1] + 'm')
 
 
     @staticmethod
-    def change_color(col, weaken=False, out=sys.stdout):
+    def change_color(col, weaken=False, conky=False,out=sys.stdout):
         """
         col : Colorオブジェクト
         out : 書き込むファイル (標準エラーならsys.stderr)
@@ -142,5 +160,8 @@ class Print:
             color[1] *= 0.6
             color[2] *= 0.6
 
-        cmd = '\033[38;2;%d;%d;%dm' % (color[0], color[1], color[2])
+        if conky:
+            cmd = '${color %s}' % Color(color).convert_to_hex()
+        else:
+            cmd = '\033[38;2;%d;%d;%dm' % (color[0], color[1], color[2])
         out.write(cmd)
