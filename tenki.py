@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
+import os
 import click
 from modules.weather_forecast_manager import WeatherForecastManager
 
@@ -14,4 +15,6 @@ def tenki(url, conky):
     wfm.print_weather(WeatherForecastManager.SHOW_ALL, conky=conky)
 
 if __name__ == '__main__':
+    os.chdir(os.path.dirname(__file__))
+    print os.getcwd()
     tenki()
