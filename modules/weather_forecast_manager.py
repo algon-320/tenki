@@ -36,11 +36,10 @@ class WeatherForecastManager:
             self.unpickle()
             last_update = int(re.match(r'.*(\d{2}):\d{2}.*', self.updated_time).group(1))
             if (last_update + 2) <= datetime.datetime.today().hour:
+                self.weathers = []
                 self.update_weather(days)
-
         else:
             self.update_weather(days)
-            self.pickle()
 
 
 
@@ -74,8 +73,9 @@ class WeatherForecastManager:
 
             self.weathers.append(w)
 
+        self.pickle()
 
-    # 現状使っていない TODO
+
     def pickle(self):
         with open(WeatherForecastManager.PICKLE_DUMP_FILE, 'w') as f:
             pickle.dump((self.url, self.weathers, self.updated_time, self.point_name), f)
