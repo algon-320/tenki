@@ -75,7 +75,7 @@ class WeatherForecastManager:
             tds_humidity = dom.xpath(r'//*[@id="bd-main"]/div[1]/table[%d]/tbody/tr[9]/td' % (k + 1))
 
             w.weathers = map(lambda td: td[1].text, tds_weather)
-            w.is_past = map(lambda td: bool(re.match('.*past.*', td[0].attrib['src'])), tds_weather)
+            w.is_past = map(lambda td: ('past' in td[0].attrib['src']), tds_weather)
             w.temperatures = map(lambda td: float(td[0].text), tds_temperature)
             w.probability_of_rains = map(lambda td: int(td[0].text), tds_probability_of_rain)
             w.amount_of_rains = map(lambda td: float(td[0].text), tds_amount_of_rain)
@@ -112,7 +112,7 @@ class WeatherForecastManager:
 
         max_width += 6
 
-        sys.stdout.write(' ' * max_width + '03時 06時 09時 12時 15時 18時 21時 24時\n')
+        sys.stdout.write((u' ' * max_width + u'03時 06時 09時 12時 15時 18時 21時 24時\n').encode('utf-8'))
         print '================================================================'
         for w in self.weathers:
             col = bool(show_opts & WeatherForecastManager.SHOW_WITHOUT_COLORS)
@@ -127,45 +127,3 @@ class WeatherForecastManager:
             if show_opts & WeatherForecastManager.SHOW_HUMIDITY:
                 w.print_humidity(max_width, no_color=col, conky=conky)
             print '================================================================'
-
-
-    # def debug_print(self):
-    #     w = Weather()
-    #     w.date = u'X月Y日(Z)'
-    #     w.weathers = [u'晴れ', u'曇り', u'小雨', u'弱雨', u'雨', u'HOGE', u'FUGA', u'PIYO']
-    #     w.is_past = [False, False, False, False, False, False, False, False]
-    #     w.temperatures = [-20, -10, 0, 10, 20, 30, 40, 50]
-    #     w.probability_of_rains = [0, 10, 20, 30, 40, 50, 60, 70]
-    #     w.amount_of_rains = [0, 10, 20, 30, 40, 50, 60, 70]
-    #     w.humidities = [0, 10, 20, 30, 40, 50, 60, 70]
-    #
-    #     width = 15
-    #
-    #     print '=======[ COLOR / FUTURE ]========================================\n'
-    #     w.print_weather(width)
-    #     w.print_temperature(width)
-    #     w.print_probability_of_rain(width)
-    #     w.print_amount_of_rain(width)
-    #     w.print_humidity(width)
-    #     print '\n========[ WITHOUT COLOR / FUTURE ]===============================\n'
-    #     w.print_weather(width, no_color=True)
-    #     w.print_temperature(width, no_color=True)
-    #     w.print_probability_of_rain(width, no_color=True)
-    #     w.print_amount_of_rain(width, no_color=True)
-    #     w.print_humidity(width, no_color=True)
-    #
-    #     w.is_past = [True, True, True, True, True, True, True, True]
-    #
-    #     print '\n========[ COLOR / PAST ]=========================================\n'
-    #     w.print_weather(width)
-    #     w.print_temperature(width)
-    #     w.print_probability_of_rain(width)
-    #     w.print_amount_of_rain(width)
-    #     w.print_humidity(width)
-    #     print '\n========[ WITHOUT COLOR / PAST ]=================================\n'
-    #     w.print_weather(width, no_color=True)
-    #     w.print_temperature(width, no_color=True)
-    #     w.print_probability_of_rain(width, no_color=True)
-    #     w.print_amount_of_rain(width, no_color=True)
-    #     w.print_humidity(width, no_color=True)
-    #     print '\n================================================================='

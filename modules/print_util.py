@@ -84,7 +84,7 @@ class String:
         string : 対象の文字列
         width : 半角基準の幅
         """
-        return (' ' * (width - String.get_string_width(string)) + string).encode('utf-8')
+        return (' ' * (width - String.get_string_width(string)) + string)
 
 
     @staticmethod
@@ -94,7 +94,7 @@ class String:
         string : 対象の文字列
         width : 半角基準の幅
         """
-        return (string + ' ' * (width - String.get_string_width(string))).encode('utf-8')
+        return (string + ' ' * (width - String.get_string_width(string)))
 
 
     @staticmethod
@@ -109,9 +109,9 @@ class String:
         """
         tmp = width - String.get_string_width(string)
         if ljust:
-            return (' ' * (tmp // 2) + string + ' ' * (tmp - tmp // 2)).encode('utf-8')
+            return (' ' * (tmp // 2) + string + ' ' * (tmp - tmp // 2))
         else:
-            return (' ' * (tmp - tmp // 2) + string + ' ' * (tmp // 2)).encode('utf-8')
+            return (' ' * (tmp - tmp // 2) + string + ' ' * (tmp // 2))
 
 
 
