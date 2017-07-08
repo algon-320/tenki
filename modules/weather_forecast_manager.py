@@ -35,13 +35,15 @@ class WeatherForecastManager:
         if os.path.exists(WeatherForecastManager.PICKLE_DUMP_FILE):
             self.unpickle()
             def parse_date(timestr):
-                mat = re.match(ur'(\d+)年(\d+)月(\d+)日(\d+):(\d+)発表', timestr)
-                year = int(mat.group(1))
-                month = int(mat.group(2))
-                day = int(mat.group(3))
-                hour = int(mat.group(4))
-                minute = int(mat.group(5))
-                return datetime.datetime(year, month, day, hour, minute)
+                d = datetime.datetime.today()
+                mat = re.match(ur'(\d+)日(\d+):(\d+)発表', timestr)
+                day = int(mat.group(1))
+                hour = int(mat.group(2))
+                minute = int(mat.group(3))
+                ret = datetime.datetime(d.year, d.month, day, hour, minute)
+                if d < ret:
+                    ret -= datetime.timedelta(month=1)
+                return ret
 
             last_update = parse_date(self.updated_time)
             if last_update + datetime.timedelta(hours=2) <= datetime.datetime.now():
@@ -55,24 +57,24 @@ class WeatherForecastManager:
     def update_weather(self, days=2):
         # print '[info] checking for update ...'
         try:
-            html = urllib2.urlopen(self.url)
+            html = urllib2.urlopen(self.url).read()
         except:
             print '[error] cannot open URL'
             sys.exit(1)
 
-        dom = lxml.html.parse(html)
-        self.updated_time = dom.xpath(r'//*[@id="point_announce_datetime"]')[0].text
-        point_info = dom.xpath(r'//*[@id="pinpoint_weather_name"]')[0].text
-        self.point_name = re.match(ur'(.+)のピンポイント天気', point_info).group(1)
+        dom = lxml.html.fromstring(html.decode('utf-8'))
+        self.updated_time = unicode(dom.xpath(r'//*[@id="main-column"]/section/h2/time/text()')[0])
+        point_info = dom.xpath(r'//*[@id="main-column"]/section/h2/text()')[0]
+        self.point_name = re.match(ur'(.+)の天気', point_info).group(1)
 
         for k in range(days):
             w = Weather()
-            w.date = dom.xpath(r'//*[@id="bd-main"]/div[1]/table[%d]/thead/tr/td/div/p' % (k + 1))[0].text
-            tds_weather = dom.xpath(r'//*[@id="bd-main"]/div[1]/table[%d]/tbody/tr[3]/td' % (k + 1))
-            tds_temperature = dom.xpath(r'//*[@id="bd-main"]/div[1]/table[%d]/tbody/tr[5]/td' % (k + 1))
-            tds_probability_of_rain = dom.xpath(r'//*[@id="bd-main"]/div[1]/table[%d]/tbody/tr[6]/td' % (k + 1))
-            tds_amount_of_rain = dom.xpath(r'//*[@id="bd-main"]/div[1]/table[%d]/tbody/tr[8]/td' % (k + 1))
-            tds_humidity = dom.xpath(r'//*[@id="bd-main"]/div[1]/table[%d]/tbody/tr[9]/td' % (k + 1))
+            w.date = dom.xpath(r'//*[@id="main-column"]/section/table[%d]/tr[1]/td/div/p/text()' % (k + 1))[0][:-1]
+            tds_weather = dom.xpath(r'//*[@id="main-column"]/section/table[%d]/tr[4]/td' % (k + 1))
+            tds_temperature = dom.xpath(r'//*[@id="main-column"]/section/table[%d]/tr[6]/td' % (k + 1))
+            tds_probability_of_rain = dom.xpath(r'//*[@id="main-column"]/section/table[%d]/tr[7]/td' % (k + 1))
+            tds_amount_of_rain = dom.xpath(r'//*[@id="main-column"]/section/table[%d]/tr[9]/td' % (k + 1))
+            tds_humidity = dom.xpath(r'//*[@id="main-column"]/section/table[%d]/tr[10]/td' % (k + 1))
 
             w.weathers = map(lambda td: td[1].text, tds_weather)
             w.is_past = map(lambda td: ('past' in td[0].attrib['src']), tds_weather)
