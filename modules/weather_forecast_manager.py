@@ -46,8 +46,9 @@ class WeatherForecastManager:
                 return ret
 
             last_update = parse_date(self.updated_time)
-            if last_update + datetime.timedelta(hours=2) <= datetime.datetime.now():
-                self.weathers = []
+            if last_update + datetime.timedelta(hours=2) <= datetime.datetime.now()\
+              or self.url != url:
+                self.url = url
                 self.update_weather(days)
         else:
             self.update_weather(days)
@@ -66,6 +67,8 @@ class WeatherForecastManager:
         self.updated_time = unicode(dom.xpath(r'//*[@id="main-column"]/section/h2/time/text()')[0])
         point_info = dom.xpath(r'//*[@id="main-column"]/section/h2/text()')[0]
         self.point_name = re.match(ur'(.+)の天気', point_info).group(1)
+
+        self.weathers = []
 
         for k in range(days):
             w = Weather()

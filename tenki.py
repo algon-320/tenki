@@ -8,7 +8,7 @@ from modules.weather_forecast_manager import WeatherForecastManager
 
 @click.command()
 @click.option('--url', type=str, default='https://tenki.jp/forecast/3/11/4020/8220/3hours.html',
-              help=u'ピンポイント天気(3時間天気)のページのURL') # つくば市の天気
+              help=u'3時間天気のページのURL') # つくば市の天気
 @click.option('--conky', is_flag=True, help=u'Conkyに表示させるときに指定してください')
 def tenki(url, conky):
     wfm = WeatherForecastManager(url)
