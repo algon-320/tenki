@@ -56,7 +56,7 @@ class WeatherForecastManager:
 
 
     def update_weather(self):
-        print '[debug] checking for updates ...'
+        #print '[debug] checking for updates ...'
         try:
             html = urllib2.urlopen(self.url).read()
         except:
