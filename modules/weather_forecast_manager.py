@@ -26,8 +26,8 @@ class WeatherForecastManager:
     SHOW_ALL = SHOW_WEATHER | SHOW_TEMPERATURE | SHOW_PROBABILITY_OF_RAIN | SHOW_AMOUNT_OF_RAIN | SHOW_HUMIDITY
 
 
-    def __init__(self, url, days=2):
-        self.url = url
+    def __init__(self, spot_url):
+        self.url = spot_url
         self.weathers = []
         self.updated_time = None
         self.point_name = ''
@@ -47,16 +47,16 @@ class WeatherForecastManager:
 
             last_update = parse_date(self.updated_time)
             if last_update + datetime.timedelta(hours=2) <= datetime.datetime.now()\
-              or self.url != url:
-                self.url = url
-                self.update_weather(days)
+              or self.url != spot_url:
+                self.url = spot_url
+                self.update_weather()
         else:
-            self.update_weather(days)
+            self.update_weather()
 
 
 
-    def update_weather(self, days=2):
-        # print '[info] checking for update ...'
+    def update_weather(self):
+        print '[debug] checking for updates ...'
         try:
             html = urllib2.urlopen(self.url).read()
         except:
@@ -70,7 +70,7 @@ class WeatherForecastManager:
 
         self.weathers = []
 
-        for k in range(days):
+        for k in range(3):
             w = Weather()
             w.date = dom.xpath(r'//*[@id="main-column"]/section/table[%d]/tr[1]/td/div/p/text()' % (k + 1))[0][:-1]
             tds_weather = dom.xpath(r'//*[@id="main-column"]/section/table[%d]/tr[4]/td' % (k + 1))
@@ -104,7 +104,7 @@ class WeatherForecastManager:
             self.point_name = tmp[3]
 
 
-    def print_weather(self, show_opts=None, conky=False):
+    def print_weather(self, show_opts=None, conky=False, days=2):
         if show_opts == None:
             show_opts = WeatherForecastManager.SHOW_ALL
 
@@ -119,7 +119,8 @@ class WeatherForecastManager:
 
         sys.stdout.write((u' ' * max_width + u'03時 06時 09時 12時 15時 18時 21時 24時\n').encode('utf-8'))
         print '================================================================'
-        for w in self.weathers:
+        for i in range(days):
+            w = self.weathers[i]
             col = bool(show_opts & WeatherForecastManager.SHOW_WITHOUT_COLORS)
             if show_opts & WeatherForecastManager.SHOW_WEATHER:
                 w.print_weather(max_width, no_color=col, conky=conky)

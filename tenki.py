@@ -6,13 +6,14 @@ import click
 from modules.weather_forecast_manager import WeatherForecastManager
 
 
-@click.command()
+@click.command(help=u"天気予報を表示します。(tenki.jp)")
 @click.option('--url', type=str, default='https://tenki.jp/forecast/3/11/4020/8220/3hours.html',
               help=u'3時間天気のページのURL') # つくば市の天気
+@click.option('--days', type=int, default=2, help=u'表示させる日数[1~3] (デフォルト2)')
 @click.option('--conky', is_flag=True, help=u'Conkyに表示させるときに指定してください')
-def tenki(url, conky):
+def tenki(url, days, conky):
     wfm = WeatherForecastManager(url)
-    wfm.print_weather(WeatherForecastManager.SHOW_ALL, conky=conky)
+    wfm.print_weather(WeatherForecastManager.SHOW_ALL, conky=conky, days=days)
 
 if __name__ == '__main__':
     os.chdir(os.path.dirname(__file__))
