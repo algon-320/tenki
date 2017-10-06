@@ -42,7 +42,7 @@ class WeatherForecastManager:
                 minute = int(mat.group(3))
                 ret = datetime.datetime(d.year, d.month, day, hour, minute)
                 if d < ret:
-                    ret -= datetime.timedelta(month=1)
+                    ret = datetime.datetime(d.year, d.month-1, day, hour, minute)
                 return ret
 
             last_update = parse_date(self.updated_time)
