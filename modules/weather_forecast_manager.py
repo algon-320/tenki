@@ -108,30 +108,40 @@ class WeatherForecastManager:
         if show_opts == None:
             show_opts = WeatherForecastManager.SHOW_ALL
 
-        print '----------------------------------------------------------------'
+        max_width = 0
+        for w in self.weathers:
+            max_width = max(max_width, String.get_string_width(w.date))
+        max_width += 6
+
+        max_unit_width = 0
+        for i in range(days):
+            w = self.weathers[i]
+            for tmp in w.weathers:
+                max_unit_width = max(max_unit_width, String.get_string_width(tmp))
+
+        print ('-' * (max_width + (max_unit_width + 1) * 8))
         print u'{p}の天気 ({M}月{D}日 {h:02d}:{m:02d} 発表)'.format(p=self.point_name,
           M=self.updated_time.month, D=self.updated_time.day,
           h=self.updated_time.hour, m=self.updated_time.minute).encode('utf-8')
-        max_width = 0
-        for w in self.weathers:
-            if max_width < String.get_string_width(w.date):
-                max_width = String.get_string_width(w.date)
+        
+        time_labels = ['03時', '06時', '09時', '12時', '15時', '18時', '21時', '24時']
+        sys.stdout.write((u' ' * max_width).encode('utf-8'))
+        for l in time_labels:
+            sys.stdout.write(String.center_unicode(l.decode('utf-8'), max_unit_width + 1))
+        sys.stdout.write('\n')
 
-        max_width += 6
-
-        sys.stdout.write((u' ' * max_width + u'03時 06時 09時 12時 15時 18時 21時 24時\n').encode('utf-8'))
-        print '================================================================'
+        print '=' * (max_width + (max_unit_width + 1) * 8)
         for i in range(days):
             w = self.weathers[i]
             col = bool(show_opts & WeatherForecastManager.SHOW_WITHOUT_COLORS)
             if show_opts & WeatherForecastManager.SHOW_WEATHER:
-                w.print_weather(max_width, no_color=col, conky=conky)
+                w.print_weather(max_width, max_unit_width, no_color=col, conky=conky)
             if show_opts & WeatherForecastManager.SHOW_TEMPERATURE:
-                w.print_temperature(max_width, no_color=col, conky=conky)
+                w.print_temperature(max_width, max_unit_width, no_color=col, conky=conky)
             if show_opts & WeatherForecastManager.SHOW_PROBABILITY_OF_RAIN:
-                w.print_probability_of_rain(max_width, no_color=col, conky=conky)
+                w.print_probability_of_rain(max_width, max_unit_width, no_color=col, conky=conky)
             if show_opts & WeatherForecastManager.SHOW_AMOUNT_OF_RAIN:
-                w.print_amount_of_rain(max_width, no_color=col, conky=conky)
+                w.print_amount_of_rain(max_width, max_unit_width, no_color=col, conky=conky)
             if show_opts & WeatherForecastManager.SHOW_HUMIDITY:
-                w.print_humidity(max_width, no_color=col, conky=conky)
-            print '================================================================'
+                w.print_humidity(max_width, max_unit_width, no_color=col, conky=conky)
+            print '=' * (max_width + (max_unit_width + 1) * 8)
