@@ -22,7 +22,7 @@ class Weather():
 
     def __init__(self):
         self.date = ''
-        self.wathers = []
+        self.weathers = []
         self.temperatures = []
         self.is_past = []
         self.probability_of_rains = []
