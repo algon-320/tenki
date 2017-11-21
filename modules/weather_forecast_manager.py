@@ -34,39 +34,39 @@ class WeatherForecastManager:
 
         if os.path.exists(WeatherForecastManager.PICKLE_DUMP_FILE):
             self.unpickle()
-            def parse_date(timestr):
-                d = datetime.datetime.today()
-                mat = re.match(ur'(\d+)日(\d+):(\d+)発表', timestr)
-                day = int(mat.group(1))
-                hour = int(mat.group(2))
-                minute = int(mat.group(3))
-                ret = datetime.datetime(d.year, d.month, day, hour, minute)
-                if d < ret:
-                    ret = datetime.datetime(d.year, d.month-1, day, hour, minute)
-                return ret
-
-            last_update = parse_date(self.updated_time)
-            if last_update + datetime.timedelta(hours=2) <= datetime.datetime.now()\
+            
+            if self.updated_time + datetime.timedelta(hours=1) <= datetime.datetime.now() \
               or self.url != spot_url:
-                self.url = spot_url
-                self.update_weather()
+                self.update_weather(spot_url)
         else:
-            self.update_weather()
+            self.update_weather(spot_url)
 
 
 
-    def update_weather(self):
-        #print '[debug] checking for updates ...'
+    def update_weather(self, url):
+        # print '[debug] checking for updates ...'
         try:
-            html = urllib2.urlopen(self.url).read()
+            html = urllib2.urlopen(url).read()
         except:
             print '[error] cannot open URL'
             sys.exit(1)
 
         dom = lxml.html.fromstring(html.decode('utf-8'))
-        self.updated_time = unicode(dom.xpath(r'//*[@id="main-column"]/section/h2/time/text()')[0])
-        point_info = dom.xpath(r'//*[@id="main-column"]/section/h2/text()')[0]
+        updated_time_str = unicode(dom.xpath(r'//*[@id="main-column"]/section/h2/time/text()')[0])
+        point_info = unicode(dom.xpath(r'//*[@id="main-column"]/section/h2/text()')[0])
         self.point_name = re.match(ur'(.+)の天気', point_info).group(1)
+
+        # 更新日時を設定
+        comment = dom.xpath(r'//*[@id="main-column"]/section/h2/time/comment()')[0]
+        comment = lxml.html.tostring(comment, method='html', encoding='unicode')
+        mat = re.match(ur'.*generate at (\d{4})\-(\d{2})\-\d{2} \d{2}\:\d{2}\:\d{2}', comment)
+        year = int(mat.group(1))
+        month = int(mat.group(2))
+        mat = re.match(ur'(\d+)日(\d+):(\d+)発表', updated_time_str)
+        day = int(mat.group(1))
+        hour = int(mat.group(2))
+        minute = int(mat.group(3))
+        self.updated_time = datetime.datetime(year, month, day, hour, minute)
 
         self.weathers = []
 
@@ -109,7 +109,9 @@ class WeatherForecastManager:
             show_opts = WeatherForecastManager.SHOW_ALL
 
         print '----------------------------------------------------------------'
-        print (self.point_name + u'の天気  (' + self.updated_time + ')').encode('utf-8')
+        print u'{p}の天気 ({M}月{D}日 {h:02d}:{m:02d} 発表)'.format(p=self.point_name,
+          M=self.updated_time.month, D=self.updated_time.day,
+          h=self.updated_time.hour, m=self.updated_time.minute).encode('utf-8')
         max_width = 0
         for w in self.weathers:
             if max_width < String.get_string_width(w.date):
