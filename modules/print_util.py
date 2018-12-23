@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import sys
@@ -52,7 +52,7 @@ class Style:
         INVERT,
         INVISIBLE,
         STRIKETHROUGH,
-    ) = map(lambda x: 1 << x, range(10))
+    ) = list(map(lambda x: 1 << x, range(10)))
 
 
 
@@ -62,15 +62,14 @@ class String:
     def get_string_width(string):
         """
         文字列の表示幅を計算
-        例: get_string_width(u'こんにちは') --> 10
-            get_string_width(u'hello') --> 5
-            get_string_width(u'ほげhoge') --> 8
+        例: get_string_width('こんにちは') --> 10
+            get_string_width('hello') --> 5
+            get_string_width('ほげhoge') --> 8
         """
-        string = unicode(string)
         width = 0
         for c in string:
             cw = unicodedata.east_asian_width(c)
-            if cw in u'AFW':
+            if cw in 'AFW':
                 width += 2
             else:
                 width += 1
@@ -78,7 +77,7 @@ class String:
 
 
     @staticmethod
-    def rjust_unicode(string, width):
+    def rjust(string, width):
         """
         width文字分を半角スペースで埋めて右寄せにして返す
         string : 対象の文字列
@@ -88,7 +87,7 @@ class String:
 
 
     @staticmethod
-    def ljust_unicode(string, width):
+    def ljust(string, width):
         """
         width文字分を半角スペースで埋めて左寄せにして返す
         string : 対象の文字列
@@ -98,14 +97,14 @@ class String:
 
 
     @staticmethod
-    def center_unicode(string, width, ljust=True):
+    def center(string, width, ljust=True):
         """
         width文字分を半角スペースで埋めて左寄せにして返す
         string : 対象の文字列
         width : 半角基準の幅
         ljust : 中央に揃えられないとき、半角スペース分左に寄せる
-        例: center_unicode(u'ほげ', 7, ljust=True)  --> u' ほげ  '
-            center_unicode(u'ほげ', 7, ljust=False) --> u'  ほげ '
+        例: center('ほげ', 7, ljust=True)  --> ' ほげ  '
+            center('ほげ', 7, ljust=False) --> '  ほげ '
         """
         tmp = width - String.get_string_width(string)
         if ljust:
@@ -143,13 +142,13 @@ class Print:
         else:
             cmd = '\033['
             for (i, v) in enumerate(Style.STYLE):
-                if style_opts & v:
+                if style_opts & v > 0:
                     cmd += "%d;" % (i)
             out.write(cmd[:-1] + 'm')
 
 
     @staticmethod
-    def change_color(col, weaken=False, conky=False,out=sys.stdout):
+    def change_color(col, weaken=False, conky=False, out=sys.stdout):
         """
         col : Colorオブジェクト
         out : 書き込むファイル (標準エラーならsys.stderr)
