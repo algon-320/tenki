@@ -31,9 +31,9 @@ class Color:
             hexcolstr = hexcolstr[1:]
         colint = int(hexcolstr, 16)
         b = colint % 256
-        colint /= 256
+        colint //= 256
         g = colint % 256
-        colint /= 256
+        colint //= 256
         r = colint
         return [r, g, b]
 
@@ -155,9 +155,9 @@ class Print:
         """
         color = copy.deepcopy(col.color)
         if weaken:
-            color[0] *= 0.6
-            color[1] *= 0.6
-            color[2] *= 0.6
+            color[0] = int(color[0] * 0.6)
+            color[1] = int(color[1] * 0.6)
+            color[2] = int(color[2] * 0.6)
 
         if conky:
             cmd = '${color %s}' % Color(color).convert_to_hex()

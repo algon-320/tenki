@@ -14,7 +14,7 @@ tenki.jpから天気を取得してターミナルに表示します。
 conkyでの表示
 
 ## Requirements
-- python 2
+- python 3
 - [click](http://click.pocoo.org)
 - [lxml](http://lxml.de)
 
