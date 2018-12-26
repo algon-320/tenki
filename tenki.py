@@ -1,10 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# -------------- for speedup urllib.request.urlopen
+import socket
+def getAddrInfoWrapper(host, port, family=0, socktype=0, proto=0, flags=0):
+    return origGetAddrInfo(host, port, socket.AF_INET, socktype, proto, flags)
+origGetAddrInfo = socket.getaddrinfo
+socket.getaddrinfo = getAddrInfoWrapper
+# -------------------------------------------------
+
 import os
 import click
 from modules.weather_forecast_manager import WeatherForecastManager
-
 
 @click.command(help='天気予報を表示します。(tenki.jp)')
 @click.option('--url', type=str, default='https://tenki.jp/forecast/3/11/4020/8220/3hours.html',
