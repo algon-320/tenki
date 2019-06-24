@@ -70,7 +70,10 @@ class Weather():
         sys.stdout.write(String.rjust('降水確率(%) | ', width))
         for (prb_rain, past) in zip(self.probability_of_rains, self.is_past):
             Print.change_color(Weather.COLOR_WHITE, weaken=past, conky=conky)
-            sys.stdout.write(String.rjust('%d' % prb_rain, unit_width))
+            if prb_rain == None:
+                sys.stdout.write('----')
+            else:
+                sys.stdout.write(String.rjust('%d' % prb_rain, unit_width))
             Print.change_style(Style.RESET, conky=conky)
             sys.stdout.write(' ')
         sys.stdout.write('\n')

@@ -87,7 +87,7 @@ class WeatherForecastManager:
             w.weathers = list(map(lambda td: td[1].text, tds_weather))
             w.is_past = list(map(lambda td: ('past' in td[0].attrib['src']), tds_weather))
             w.temperatures = list(map(lambda td: float(td[0].text), tds_temperature))
-            w.probability_of_rains = list(map(lambda td: int(td[0].text), tds_probability_of_rain))
+            w.probability_of_rains = list(map(lambda td: None if td[0].text == '---' else int(td[0].text), tds_probability_of_rain))
             w.amount_of_rains = list(map(lambda td: float(td[0].text), tds_amount_of_rain))
             w.humidities = list(map(lambda td: int(td[0].text), tds_humidity))
 
