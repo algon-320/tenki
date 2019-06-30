@@ -31,5 +31,5 @@ def tenki(url, days, conky, slim):
         wfm.print_weather(WeatherForecastManager.SHOW_ALL, conky=conky, days=days)
 
 if __name__ == '__main__':
-    os.chdir(os.path.dirname(__file__))
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     tenki()
