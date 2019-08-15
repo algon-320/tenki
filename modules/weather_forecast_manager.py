@@ -17,7 +17,7 @@ class WeatherForecastManager:
 
     XPATH_UPDATED_TIME = r'//*[@id="main-column"]/section/h2/time/text()'
     XPATH_POINT_INFO = r'//*[@id="main-column"]/section/h2/text()'
-    XPATH_UPDATED_TIME_DETAIL_COMMENT = r'//*[@id="main-column"]/section/h2/time/comment()'
+    XPATH_ANNOUNCED_TIME_COMMENT = r'//*[@id="main-column"]/section/comment()[contains(., "announce_datetime")]'
     XPATH_WEATHER_DATES = r'//*[@id="main-column"]/section/table[%d]/tr[1]/td/div/p/text()'
     XPATH_WEATHER_TD = r'//*[@id="main-column"]/section/table[%d]/tr[4]/td'
     XPATH_TEMPERATURE_TD = r'//*[@id="main-column"]/section/table[%d]/tr[6]/td'
@@ -62,9 +62,9 @@ class WeatherForecastManager:
         self.point_name = re.match(r'(.+)の天気', point_info).group(1)
 
         # 更新日時を設定
-        comment = dom.xpath(WeatherForecastManager.XPATH_UPDATED_TIME_DETAIL_COMMENT)[0]
+        comment = dom.xpath(WeatherForecastManager.XPATH_ANNOUNCED_TIME_COMMENT)[0]
         comment = lxml.html.tostring(comment, method='html', encoding='unicode')
-        mat = re.match(r'.*generate at (\d{4})\-(\d{2})\-\d{2} \d{2}\:\d{2}\:\d{2}', comment)
+        mat = re.match(r'.*announce_datetime:(\d{4})\-(\d{2})\-\d{2} \d{2}\:\d{2}\:\d{2}', comment)
         year = int(mat.group(1))
         month = int(mat.group(2))
         mat = re.match(r'(\d+)日(\d+):(\d+)発表', updated_time_str)
